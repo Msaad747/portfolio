@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhammad Saad — Junior MERN Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1720;
+    --surface: #172436;
+    --surface-2: #1D2C42;
+    --line: #2A3B54;
+    --text: #E8EDF2;
+    --muted: #8496AD;
+    --gold: #E8B04B;
+    --mint: #7FD9B6;
+    --rose: #E17497;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    padding-bottom: 40px;
+  }
+
+  a { color: inherit; }
+  :focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* ===== Tab bar nav ===== */
+  .tabbar{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: stretch;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabbar::-webkit-scrollbar{ display:none; }
+  .tabbar .brand{
+    display:flex; align-items:center; gap:8px;
+    padding: 0 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+    border-right: 1px solid var(--line);
+  }
+  .tabbar .brand .dot{ width:9px; height:9px; border-radius:50%; background: var(--rose); box-shadow: 16px 0 0 var(--gold), 32px 0 0 var(--mint); margin-right: 24px;}
+  .tab{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 12px 20px;
+    white-space: nowrap;
+    border-right: 1px solid var(--line);
+    position: relative;
+    transition: color .15s ease, background .15s ease;
+  }
+  .tab:hover{ color: var(--text); background: var(--surface-2); }
+  .tab .ext{ color: var(--muted); }
+  .tab.active{ color: var(--text); background: var(--bg); }
+  .tab.active::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:-1px;
+    height:2px; background: var(--gold);
+  }
+  .tab .dirty{ color: var(--rose); margin-left:6px; }
+
+  section{ max-width: 880px; margin: 0 auto; padding: 64px 24px 24px; scroll-margin-top: 56px; }
+
+  /* ===== Editor chrome helpers ===== */
+  .filehead{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    display:flex; align-items:center; gap:8px;
+    margin-bottom: 18px;
+  }
+  .filehead .path-sep{ color: var(--line); }
+  .filehead .filename{ color: var(--gold); }
+  .lineno{
+    color: var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+    user-select: none;
+    display:inline-block;
+    width: 26px;
+  }
+  .comment{ color: var(--muted); }
+  .kw{ color: var(--rose); }
+  .str{ color: var(--mint); }
+  .fn{ color: var(--gold); }
+
+  /* ===== Hero ===== */
+  .hero{ padding-top: 72px; }
+  .hero .kicker{
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 6px;
+  }
+  .hero h1{
+    font-family: var(--mono);
+    font-weight: 800;
+    font-size: clamp(2.1rem, 6vw, 3.4rem);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 .kw{ font-weight: 500; }
+  .hero h1 .name{ color: var(--text); }
+  .hero .role{
+    font-family: var(--mono);
+    color: var(--gold);
+    font-size: 1.05rem;
+    margin: 0 0 28px;
+  }
+  .hero .jsdoc{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px 22px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .hero .jsdoc p{ margin: 0 0 10px; color: var(--text); font-family: var(--sans); font-size: 15px; }
+  .hero .jsdoc p:last-child{ margin-bottom:0; }
+
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap: 10px 18px;
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta-row a{ text-decoration:none; }
+  .meta-row a:hover{ color: var(--mint); }
+  .meta-row span.sep{ color: var(--line); }
+
+  /* ===== Section labels ===== */
+  h2.sec-title{
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--muted);
+    margin: 0 0 4px;
+  }
+  h2.sec-title .num{ color: var(--gold); }
+  h3.sec-sub{
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin: 2px 0 26px;
+    color: var(--text);
+  }
+
+  /* ===== Projects ===== */
+  .project{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .project .tophead{
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .project .tophead .path .filename{ color: var(--gold); }
+  .project .links{ display:flex; gap: 10px; flex-shrink:0; }
+  .project .links a{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size: 12px;
+    text-decoration:none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--text);
+    white-space: nowrap;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .project .links a:hover{ border-color: var(--mint); color: var(--mint); }
+  .project .body{ padding: 20px 22px 22px; }
+  .project .desc{ margin: 0 0 14px; color: var(--text); font-size: 15px; }
+  .project ul.bullets{ margin: 0 0 16px; padding-left: 20px; color: var(--muted); font-size: 14px; }
+  .project ul.bullets li{ margin-bottom: 5px; }
+  .project ul.bullets li::marker{ color: var(--gold); }
+  .stack{ display:flex; flex-wrap:wrap; gap: 8px; font-family: var(--mono); font-size: 12px; }
+  .stack span{
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--mint);
+  }
+
+  /* ===== Skills ===== */
+  .skills-json{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 24px;
+    font-family: var(--mono);
+    font-size: 14px;
+    overflow-x: auto;
+  }
+  .skills-json .k{ color: var(--rose); }
+  .skills-json .v{ color: var(--mint); }
+  .skills-json .punc{ color: var(--muted); }
+  .skills-json .indent{ padding-left: 22px; }
+
+  /* ===== Education / cert ===== */
+  .cards-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 640px){ .cards-2{ grid-template-columns: 1fr; } }
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 20px;
+  }
+  .card .tag{
+    display:inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--bg);
+    background: var(--gold);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .card .tag.pending{ background: var(--muted); }
+  .card h4{ margin: 0 0 4px; font-size: 1.02rem; }
+  .card .sub{ color: var(--muted); font-size: 13.5px; margin: 0 0 10px; }
+  .card .foot{ font-size: 13px; color: var(--text); }
+
+  .cert-line{
+    display:flex; align-items:center; gap:12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .cert-line .fn{ font-family: var(--sans); color: var(--text); font-weight:600; font-size: 14px;}
+
+  /* ===== Contact ===== */
+  .contact-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 26px 26px;
+  }
+  .contact-card .prompt{ font-family: var(--mono); color: var(--mint); font-size: 13px; margin-bottom: 14px;}
+  .contact-list{ display:flex; flex-direction:column; gap: 10px; }
+  .contact-list a{
+    display:flex; align-items:center; gap:10px;
+    text-decoration:none;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--text);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .contact-list a:last-child{ border-bottom:none; }
+  .contact-list a:hover{ color: var(--mint); }
+  .contact-list .k{ color: var(--muted); width: 90px; flex-shrink:0; }
+
+  /* ===== Status bar ===== */
+  .statusbar{
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--gold);
+    color: #1a1408;
+    font-family: var(--mono);
+    font-size: 12px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 5px 16px;
+    z-index: 60;
+  }
+  .statusbar .left, .statusbar .right{ display:flex; gap:16px; align-items:center; }
+  .statusbar .right span:not(:last-child)::after{ content:"·"; margin-left:16px; color:#7a5c14; }
+  @media (max-width: 560px){
+    .statusbar .left span:nth-child(2), .statusbar .left span:nth-child(3){ display:none; }
+  }
+
+  footer.end{
+    max-width: 880px; margin: 40px auto 30px; padding: 0 24px;
+    font-family: var(--mono); font-size: 12px; color: var(--line);
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+
+  <nav class="tabbar" aria-label="Section navigation">
+    <div class="brand"><span class="dot" aria-hidden="true"></span>portfolio</div>
+    <a href="#about" class="tab active" data-tab="about">about<span class="ext">.js</span></a>
+    <a href="#projects" class="tab" data-tab="projects">projects<span class="ext">.jsx</span></a>
+    <a href="#skills" class="tab" data-tab="skills">skills<span class="ext">.json</span></a>
+    <a href="#education" class="tab" data-tab="education">education<span class="ext">.md</span></a>
+    <a href="#contact" class="tab" data-tab="contact">contact<span class="ext">.sh</span><span class="dirty">●</span></a>
+  </nav>
+
+  <section id="about" class="hero">
+    <div class="filehead"><span class="filename">about.js</span><span class="path-sep">—</span><span>Muhammad Saad's workspace</span></div>
+    <p class="kicker">// export default developer</p>
+    <h1><span class="kw">const</span> <span class="name">MuhammadSaad</span></h1>
+    <p class="role">Junior MERN Stack Developer · Lahore, Pakistan</p>
+
+    <div class="jsdoc">
+      <p>Junior MERN stack developer who builds full‑stack apps with React, Node, Express, and PostgreSQL — from schema to shipped UI.</p>
+      <p>I like turning a plain feature request into a working app: auth that actually protects routes, APIs that follow REST conventions, and interfaces that don't make the user think twice. Still learning fast, still shipping projects, still committing.</p>
+    </div>
+
+    <div class="meta-row">
+      <a href="tel:+923306961412">📞 +92 330‑6961412</a>
+      <span class="sep">/</span>
+      <a href="mailto:saadx838@gmail.com">✉ saadx838@gmail.com</a>
+      <span class="sep">/</span>
+      <a href="https://github.com/Msaad747" target="_blank" rel="noopener">⌥ github.com/Msaad747</a>
+      <span class="sep">/</span>
+      <span>📍 Lahore, Pakistan</span>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2 class="sec-title"><span class="num">02</span> // things I've built</h2>
+    <h3 class="sec-sub">Projects</h3>
+
+    <article class="project">
+      <div class="tophead">
+        <span class="path">src/projects/<span class="filename">NoteCloudy.jsx</span></span>
+        <div class="links">
+          <a href="https://note-cloudy.vercel.app/" target="_blank" rel="noopener">▶ Live demo</a>
+          <a href="https://github.com/Msaad747/NoteCloudy" target="_blank" rel="noopener">⌥ Repo</a>
+        </div>
+      </div>
+      <div class="body">
+        <p class="desc"><span class="lineno">01</span><span class="comment">// A full‑stack notes app — write, organize, and keep notes safely under your own login.</span></p>
+        <ul class="bullets">
+          <li>Secure sign‑up and login with JWT and hashed passwords, so routes stay protected end to end.</li>
+          <li>RESTful API with full CRUD for notes — create, read, update, delete, all wired to PostgreSQL via Sequelize.</li>
+          <li>Responsive React interface connected live to the backend.</li>
+        </ul>
+        <div class="stack"><span>React.js</span><span>Node.js</span><span>Express.js</span><span>PostgreSQL</span><span>Sequelize</span><span>JWT</span></div>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="tophead">
+        <span class="path">src/projects/<span class="filename">Newzify.jsx</span></span>
+        <div class="links">
+          <a href="https://github.com/Msaad747/Newz" target="_blank" rel="noopener">⌥ Repo</a>
+        </div>
+      </div>
+      <div class="body">
+        <p class="desc"><span class="lineno">01</span><span class="comment">// A news reader pulling live articles from an external API.</span></p>
+        <ul class="bullets">
+          <li>Category‑based filtering to browse news by topic.</li>
+          <li>Search built in to find relevant articles fast.</li>
+        </ul>
+        <div class="stack"><span>React.js</span><span>News API</span><span>CSS</span></div>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="tophead">
+        <span class="path">src/projects/<span class="filename">TextEditz.jsx</span></span>
+        <div class="links">
+          <a href="https://text-editz.vercel.app" target="_blank" rel="noopener">▶ Live demo</a>
+          <a href="https://github.com/Msaad747/TextEditz" target="_blank" rel="noopener">⌥ Repo</a>
+        </div>
+      </div>
+      <div class="body">
+        <p class="desc"><span class="lineno">01</span><span class="comment">// A text‑processing toolkit — convert, count, and analyze text on the fly.</span></p>
+        <ul class="bullets">
+          <li>Case conversion, word count, and character count utilities.</li>
+          <li>Responsive layout tuned for both desktop and mobile.</li>
+        </ul>
+        <div class="stack"><span>React.js</span><span>JavaScript</span><span>CSS</span><span>Vercel</span></div>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="tophead">
+        <span class="path">src/projects/<span class="filename">MiniGames.jsx</span></span>
+        <div class="links">
+          <a href="https://mini-games-lemon-omega.vercel.app/" target="_blank" rel="noopener">▶ Live demo</a>
+          <a href="https://github.com/Msaad747/Mini_Projects" target="_blank" rel="noopener">⌥ Repo</a>
+        </div>
+      </div>
+      <div class="body">
+        <p class="desc"><span class="lineno">01</span><span class="comment">// Two small browser games, built for the fun of it.</span></p>
+        <ul class="bullets">
+          <li>Tic‑Tac‑Toe and Rock‑Paper‑Scissors, playable in‑browser.</li>
+        </ul>
+        <div class="stack"><span>JavaScript</span><span>React.js</span></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="skills">
+    <h2 class="sec-title"><span class="num">03</span> // what I work with</h2>
+    <h3 class="sec-sub">Skills</h3>
+    <div class="skills-json">
+      <div><span class="punc">{</span></div>
+      <div class="indent"><span class="k">"languages"</span><span class="punc">:</span> [<span class="v">"JavaScript"</span>, <span class="v">"Python"</span>]<span class="punc">,</span></div>
+      <div class="indent"><span class="k">"frontend"</span><span class="punc">:</span> [<span class="v">"React.js"</span>, <span class="v">"HTML5"</span>, <span class="v">"CSS3"</span>]<span class="punc">,</span></div>
+      <div class="indent"><span class="k">"backend"</span><span class="punc">:</span> [<span class="v">"Express.js"</span>, <span class="v">"REST APIs"</span>]<span class="punc">,</span></div>
+      <div class="indent"><span class="k">"databases"</span><span class="punc">:</span> [<span class="v">"PostgreSQL"</span>, <span class="v">"SQLite3"</span>, <span class="v">"Basic SQL"</span>]<span class="punc">,</span></div>
+      <div class="indent"><span class="k">"tools"</span><span class="punc">:</span> [<span class="v">"Git"</span>, <span class="v">"GitHub"</span>, <span class="v">"Vercel"</span>]<span class="punc">,</span></div>
+      <div class="indent"><span class="k">"concepts"</span><span class="punc">:</span> [<span class="v">"JWT Authentication"</span>, <span class="v">"Password Hashing"</span>, <span class="v">"MVC"</span>]<span class="punc">,</span></div>
+      <div class="indent"><span class="k">"languages_spoken"</span><span class="punc">:</span> [<span class="v">"English (fluent)"</span>, <span class="v">"Urdu (native)"</span>]</div>
+      <div><span class="punc">}</span></div>
+    </div>
+  </section>
+
+  <section id="education">
+    <h2 class="sec-title"><span class="num">04</span> // background</h2>
+    <h3 class="sec-sub">Education & certification</h3>
+
+    <div class="cards-2">
+      <div class="card">
+        <span class="tag pending">Result awaited</span>
+        <h4>Punjab Group of Colleges</h4>
+        <p class="sub">Computer Science · 2024 – 2026</p>
+      </div>
+      <div class="card">
+        <span class="tag">Completed 2024</span>
+        <h4>Cantt Public High School, Lahore</h4>
+        <p class="sub">Biology</p>
+        <p class="foot">Passing percentage: 84%</p>
+      </div>
+    </div>
+
+    <div class="cert-line">
+      <span>🎓</span>
+      <span class="fn">Computer Foundation Course</span>
+      <span>— Peak Solutions, July 2024</span>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2 class="sec-title"><span class="num">05</span> // let's talk</h2>
+    <h3 class="sec-sub">Contact</h3>
+    <div class="contact-card">
+      <p class="prompt">$ open --new-conversation</p>
+      <div class="contact-list">
+        <a href="mailto:saadx838@gmail.com"><span class="k">email</span> saadx838@gmail.com</a>
+        <a href="tel:+923306961412"><span class="k">phone</span> +92 330‑6961412</a>
+        <a href="https://github.com/Msaad747" target="_blank" rel="noopener"><span class="k">github</span> github.com/Msaad747</a>
+        <a href="#"><span class="k">location</span> Lahore, Pakistan</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="end">// built from Muhammad Saad's résumé — thanks for reading the source</footer>
+
+  <div class="statusbar">
+    <div class="left">
+      <span id="clock">00:00:00</span>
+      <span>UTF‑8</span>
+      <span>Asia/Karachi</span>
+    </div>
+    <div class="right">
+      <span>Ln 1, Col 1</span>
+      <span>Open to junior MERN roles</span>
+    </div>
+  </div>
+
+<script>
+  // Active tab highlighting on scroll
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const sections = tabs.map(t => document.querySelector(t.getAttribute('href')));
+  function setActive(){
+    let idx = 0;
+    const y = window.scrollY + 120;
+    sections.forEach((s, i) => { if (s && s.offsetTop <= y) idx = i; });
+    tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+  }
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+
+  // Live clock, Asia/Karachi
+  function tick(){
+    const el = document.getElementById('clock');
+    if(!el) return;
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Karachi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    el.textContent = fmt.format(now);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
